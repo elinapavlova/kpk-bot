@@ -7,7 +7,7 @@ using kpk_telegram_bot.Common.Mappers;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace kpk_telegram_bot.Core.Commands.Schedule;
+namespace kpk_telegram_bot.Core.Commands;
 
 public class ScheduleCommand : ICommand
 {

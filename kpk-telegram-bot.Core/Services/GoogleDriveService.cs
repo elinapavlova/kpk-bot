@@ -13,8 +13,8 @@ public class GoogleDriveService : IGoogleDriveService
 
     public GoogleDriveService(ApplicationOptions appOptions, GoogleDriveApiOptions driveOptions)
     {
-        _applicationName = appOptions.ApplicationName ?? throw new ArgumentNullException(appOptions.ApplicationName);
-        _apiKey = driveOptions.ApiKey ?? throw new ArgumentNullException(driveOptions.ApiKey);
+        _applicationName = appOptions.ApplicationName;
+        _apiKey = driveOptions.ApiKey;
     }
 
     public async Task<FilesResource.GetRequest> GetFileById(string fileId)
