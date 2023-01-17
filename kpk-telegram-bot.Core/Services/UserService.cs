@@ -27,4 +27,12 @@ public class UserService : IUserService
     {
         return await _userRepository.IsExist(userId);
     }
+
+    public async Task<UserResponse?> GetById(long userId)
+    {
+        var user = await _userRepository.GetById(userId);
+        return user is null
+            ? null
+            : UserMapper.Map(user);
+    }
 }

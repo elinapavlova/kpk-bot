@@ -12,6 +12,7 @@ public class CommandsProvider : IDependencyProvider
         services.AddScoped<ICommand, ScheduleCommand>();
         services.AddScoped<ICommand, StartCommand>();
         services.AddScoped<ICommand, MyMarksCommand>();
+        services.AddScoped<ICommand, GroupCommand>();
         
         services.AddScoped<CommandContainer>();
     }
