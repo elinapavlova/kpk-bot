@@ -11,7 +11,6 @@ public class ServicesProvider : IDependencyProvider
     {
         services.AddScoped<IBotService, BotService>();
         services.AddScoped<ICommandService, CommandService>();
-        services.AddScoped<ITelegramApiService, TelegramApiService>();
         services.AddScoped<IGoogleDriveService, GoogleDriveService>();
         services.AddScoped<IScheduleService, ScheduleService>();
         services.AddScoped<IGroupService, GroupService>();

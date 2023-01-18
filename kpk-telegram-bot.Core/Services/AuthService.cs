@@ -2,6 +2,7 @@
 using kpk_telegram_bot.Common.Database.Entities;
 using kpk_telegram_bot.Common.Enums;
 using kpk_telegram_bot.Common.Logger;
+using kpk_telegram_bot.Common.Mappers;
 using kpk_telegram_bot.Common.Models;
 
 namespace kpk_telegram_bot.Core.Services;
@@ -28,7 +29,7 @@ public class AuthService : IAuthService
             return "Несуществующая группа! Попробуйте еще раз";
         }
         
-        var user = await _userService.Create(new UserEntity
+        var user = await _userService.CreateOrUpdate(new UserEntity
         {
             Id = register.Id, UserName = username, GroupId = group.Id, RoleId = (uint)UserRole.Student
         });
@@ -37,9 +38,32 @@ public class AuthService : IAuthService
         {
             return "Что-то пошло не так! Попробуйте еще раз";
         }
-        _logger.Information($"Register user {register.Id} [{username}] {group.Name}");
+        _logger.Information("Регистрация пользователя {id} [{username}] {groupName}", register.Id, username, group.Name);
         
-        return $"Вы добавлены в базу!\r\nСтудент: {user.UserName}\r\nГруппа: {user.GroupName}" +
+        var result = UserMapper.Map(user);
+        
+        return $"Вы добавлены в базу!\r\nСтудент: {result.UserName}\r\nГруппа: {result.GroupName}" +
                "\r\nЕсли что-то пошло не так, свяжитесь с @otstante_mne_grustno";
+    }
+
+    public async Task Restart(long userId)
+    {
+        var user = await _userService.GetById(userId);
+        if (user is null)
+        {
+            _logger.Error("Перезапуск бота. Пользователь по Id {userId} не найден", userId);
+            return;
+        }
+
+        user.DateDeleted = null;
+        user = await _userService.CreateOrUpdate(user);
+        
+        if (user is null)
+        {
+            _logger.Error("Перезапуск бота. Пользователя по Id {userId} не удалось обновить", userId);
+            return;
+        }
+        
+        _logger.Information("Пользователь с Id {userId} перезапустил бот", userId);
     }
 }

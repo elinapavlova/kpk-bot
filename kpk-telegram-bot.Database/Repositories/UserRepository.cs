@@ -43,5 +43,26 @@ public class UserRepository : BaseRepository<UserEntity, long>, IUserRepository
             var entry = await dbSet.AddAsync(user);
             return entry.Entity;
         });
-    }  
+    }
+
+    public async Task<UserEntity?> Update(UserEntity userForUpdate)
+    {
+        return await ExecuteWithResult(async dbSet =>
+        {
+            var user = await dbSet.FirstOrDefaultAsync(x => x.Id == userForUpdate.Id);
+            if (user is null)
+            {
+                return null;
+            }
+
+            user.UserName = userForUpdate.UserName;
+            user.GroupId = userForUpdate.GroupId;
+            user.RoleId = userForUpdate.RoleId;
+            user.DateUpdated = DateTime.Now;
+            user.DateDeleted = userForUpdate.DateDeleted;
+
+            var result = dbSet.Update(user);
+            return result.Entity;
+        });
+    }
 }

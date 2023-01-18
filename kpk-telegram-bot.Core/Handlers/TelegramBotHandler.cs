@@ -16,7 +16,6 @@ public class TelegramBotHandler : ITelegramBotHandler
 {
     private readonly ILogger _logger;
     private readonly ITelegramHttpClient _telegramHttpClient;
-    private readonly ITelegramApiService _telegramService;
     private readonly ICommandService _commandService;
     private readonly IUserService _userService;
     private readonly IAuthService _authService;
@@ -25,7 +24,6 @@ public class TelegramBotHandler : ITelegramBotHandler
     (
         ILogger logger, 
         ITelegramHttpClient telegramHttpClient,
-        ITelegramApiService telegramService,
         ICommandService commandService,
         IUserService userService,
         IAuthService authService
@@ -33,7 +31,6 @@ public class TelegramBotHandler : ITelegramBotHandler
     {
         _logger = logger;
         _telegramHttpClient = telegramHttpClient;
-        _telegramService = telegramService;
         _commandService = commandService;
         _userService = userService;
         _authService = authService;
@@ -59,7 +56,7 @@ public class TelegramBotHandler : ITelegramBotHandler
                 case UpdateType.MyChatMember :
                     if (update.MyChatMember.NewChatMember.Status != ChatMemberStatus.Kicked) 
                         break;
-                    await _telegramService.StopBot(update);
+                    await _userService.StopBot(update.MyChatMember.From.Id);
                     break;
             }
         }
@@ -98,10 +95,10 @@ public class TelegramBotHandler : ITelegramBotHandler
         }
         try
         {
+            var words = message.Text.Split(' ');
             //TODO переделать
             if (await _userService.CheckExist(message.From.Id) is false)
             {
-                var words = message.Text.Split(' ');
                 if (words.Length != 3)
                 {
                     await _telegramHttpClient.SendTextMessage(message.Chat.Id, "Вы новенький! Отправьте информацию о себе\r\n" +
@@ -114,6 +111,10 @@ public class TelegramBotHandler : ITelegramBotHandler
                 var result = await _authService.Register(new RegisterModel(message.From.Id, words));
                 await _telegramHttpClient.SendTextMessage(message.Chat.Id, result);
                 return;
+            }
+            if (await _userService.IsActual(message.From.Id) is false)
+            {
+                await _authService.Restart(message.From.Id);
             }
             
             await _commandService.Execute(message);
