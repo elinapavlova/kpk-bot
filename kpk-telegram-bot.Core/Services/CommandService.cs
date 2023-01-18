@@ -41,7 +41,8 @@ public class CommandService : ICommandService
         }
         catch (Exception e)
         {
-            _logger.Error("Failed execute command {commandName}\r\nException:{exception}",command.GetType().Name, e);
+            _logger.Error("Failed execute command {commandName} by user {userId}\r\nException:{exception}",
+                command.GetType().Name,message.From.Id, e);
         }
     }
     
