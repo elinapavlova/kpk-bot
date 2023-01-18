@@ -21,9 +21,9 @@ public class StartCommand : ICommand
         await _telegramHttpClient.SendTextMessage(message.Chat.Id, "Меню", keyboard);
     }
 
+    // TODO по ролям
     private static ReplyKeyboardMarkup CreateCommandsKeyboard()
     {
-        var keyboard = new ReplyKeyboardMarkup();
         var rows = new List<KeyboardButton[]>();
         var columns = new List<KeyboardButton>();
         var lastIndex = UsefulCommands.Commands.Count - 1;
@@ -43,8 +43,8 @@ public class StartCommand : ICommand
             rows.Add(columns.ToArray());
             columns = new List<KeyboardButton>();
         }
-
-        keyboard.Keyboard = rows.ToArray();
+        
+        var keyboard = new ReplyKeyboardMarkup(oneTimeKeyboard: true, keyboard: rows.ToArray());
         return keyboard;
     }
 }
