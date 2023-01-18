@@ -197,14 +197,10 @@ public class ScheduleService : IScheduleService
         }
 
         var dc = DocumentCore.Load(GetFileName(fileName, FileTypes.Docx));
-        dc.Save(GetFileName(fileName, FileTypes.Pdf));
-
-        dc = DocumentCore.Load(GetFileName(fileName, FileTypes.Pdf));
         dc.Save(GetFileName(fileName, FileTypes.Jpg));
 
         ScheduleHelper.RemoveTempFiles(new List<string>
         {
-            GetFileName(fileName, FileTypes.Pdf), 
             GetFileName(fileName, FileTypes.Docx)
         });
     }
