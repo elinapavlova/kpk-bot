@@ -48,9 +48,9 @@ public class CommandService : ICommandService
     
     private ICommand? GetCommandByName(string? commandName)
     {
-        if (string.IsNullOrEmpty(commandName) is false && UsefulCommands.Commands.ContainsKey(commandName))
+        if (string.IsNullOrEmpty(commandName) is false && UsefulCommands.All().Any(x => x.Command.Key == commandName))
         {
-            commandName = UsefulCommands.Commands.GetValueOrDefault(commandName);
+            commandName = UsefulCommands.All().FirstOrDefault(x => x.Command.Key == commandName)?.Command.Value;
         }
         return string.IsNullOrEmpty(commandName) 
             ? null 
