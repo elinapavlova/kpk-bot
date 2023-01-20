@@ -1,4 +1,5 @@
 ﻿using kpk_telegram_bot.Common.Enums;
+using kpk_telegram_bot.Common.Models;
 
 namespace kpk_telegram_bot.Common.Consts;
 
@@ -59,17 +60,5 @@ public static class UsefulCommands
             )
         });
         return commands;
-    }
-
-    public class CommandByRolesModel
-    {
-        public CommandByRolesModel(List<UserRole> roles, KeyValuePair<string, string> command)
-        {
-            Roles = roles;
-            Command = command;
-        }
-
-        public List<UserRole> Roles { get; set; }
-        public KeyValuePair<string, string> Command { get; set; }
     }
 }

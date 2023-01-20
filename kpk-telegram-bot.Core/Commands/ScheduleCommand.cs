@@ -1,6 +1,8 @@
-﻿using kpk_telegram_bot.Common.Contracts.Commands;
+﻿using kpk_telegram_bot.Common.Consts;
+using kpk_telegram_bot.Common.Contracts.Commands;
 using kpk_telegram_bot.Common.Contracts.HttpClients;
 using kpk_telegram_bot.Common.Contracts.Services;
+using kpk_telegram_bot.Common.Enums;
 using kpk_telegram_bot.Common.Helpers;
 using kpk_telegram_bot.Common.Logger;
 using kpk_telegram_bot.Common.Mappers;
@@ -12,12 +14,14 @@ namespace kpk_telegram_bot.Core.Commands;
 public class ScheduleCommand : ICommand
 {
     private readonly IScheduleService _scheduleService;
+    private readonly IUserService _userService;
     private readonly ITelegramHttpClient _telegramHttpClient;
     private readonly ILogger _logger;
 
-    public ScheduleCommand(IScheduleService scheduleService, ITelegramHttpClient telegramHttpClient, ILogger logger)
+    public ScheduleCommand(IScheduleService scheduleService, IUserService userService, ITelegramHttpClient telegramHttpClient, ILogger logger)
     {
         _scheduleService = scheduleService;
+        _userService = userService;
         _telegramHttpClient = telegramHttpClient;
         _logger = logger;
     }
@@ -25,28 +29,30 @@ public class ScheduleCommand : ICommand
     public async Task Execute(Message message)
     {
         var text = message.Text.Trim();
-        if (text == "Расписание")
-        {
-            var keyboard = CreateCommandsKeyboard();
-            await _telegramHttpClient.SendTextMessage(message.Chat.Id, "Расписание", keyboard);
-            return;
-        }
-        
         var words = text.Split(' ');
         if (words.Length != 1)
         {
-            await _telegramHttpClient.SendTextMessage(message.Chat.Id, "Невалидный запрос на получение расписания");
-            _logger.Warning("Невалидный запрос на получение расписания {text}. Пользователь {fromId} [{fromUsername}]", 
-                text, message.From.Id, message.From.Username);
+            await HandleError(message, text);
             return;
         }
         
+        var user = await _userService.GetById(message.From.Id);
+        if (user is null)
+        {
+            await HandleError(message, text);
+            return;
+        }
+        if (text == "Расписание")
+        {
+            var keyboard = CreateCommandsKeyboard((UserRole)user.RoleId);
+            await _telegramHttpClient.SendTextMessage(message.Chat.Id, "Расписание", keyboard);
+            return;
+        }
+
         words = words.First().Split('_');
         if (words.Length != 2)
         {
-            await _telegramHttpClient.SendTextMessage(message.Chat.Id, "Невалидный запрос на получение расписания");
-            _logger.Warning("Невалидная команда {text}. Пользователь {fromId} [{fromUsername}]", 
-                text, message.From.Id, message.From.Username);
+            await HandleError(message, text);
             return;
         }
 
@@ -58,34 +64,18 @@ public class ScheduleCommand : ICommand
         }
         await _telegramHttpClient.SendPhotoMessage(message.Chat.Id, ScheduleHelper.CreateMessageText(words[1]), schedule);
     }
-    
-    private static InlineKeyboardMarkup CreateCommandsKeyboard()
+
+    private async Task HandleError(Message message, string text)
     {
-        var keyboard = new InlineKeyboardMarkup(
-            new InlineKeyboardButton[] 
-            {//TODO по ролям (очник/заочник/преподаватель)
-                new () 
-                {
-                    Text = "Сегодня", CallbackData = "/schedule_today"
-                },
-                new ()
-                {
-                    Text = "Актуальное", CallbackData = "/schedule_actual"
-                },
-                new ()
-                {
-                    Text = "Завтра", CallbackData = "/schedule_tomorrow"
-                },                
-                new ()
-                {
-                    Text = "Неделя", CallbackData = "/schedule_week"
-                },
-                // new ()
-                // {
-                //     Text = "Заочники", CallbackData = "/schedule_distant"
-                // }
-            }
-        );
+        await _telegramHttpClient.SendTextMessage(message.Chat.Id,
+            "Попробуйте перезапустить бот с помощью команды /start и попробовать снова");
+        _logger.Warning("Невалидный запрос на получение расписания {text}. Пользователь {fromId} [{fromUsername}]",
+            text, message.From.Id, message.From.Username);
+    }
+
+    private static InlineKeyboardMarkup CreateCommandsKeyboard(UserRole userRole)
+    {
+        var keyboard = new InlineKeyboardMarkup(ScheduleKeyboardCommands.GetInlineButtons(userRole));
         return keyboard;
     }
 }

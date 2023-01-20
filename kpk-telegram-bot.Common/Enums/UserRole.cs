@@ -5,5 +5,6 @@ public enum UserRole
     Teacher = 1,
     Admin = 2,
     Student = 3,
-    Guest = 4
+    Guest = 4,
+    Distant = 5
 }
