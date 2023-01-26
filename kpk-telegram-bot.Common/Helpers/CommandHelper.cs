@@ -1,4 +1,5 @@
-﻿using Telegram.Bot.Types.Enums;
+﻿using kpk_telegram_bot.Common.Exceptions;
+using Telegram.Bot.Types.Enums;
 
 namespace kpk_telegram_bot.Common.Helpers;
 
@@ -14,5 +15,13 @@ public static class CommandHelper
         return string.IsNullOrEmpty(name)
             ? null
             : name.Replace("@kpk_telegram_bot", string.Empty);
+    }
+    
+    public static void ThrowError(string message, string text)
+    {
+        throw new CommandExecuteException(message, details: new Dictionary<string, string>
+        {
+            {"text", text}
+        });
     }
 }
