@@ -1,7 +1,7 @@
-﻿using DocumentFormat.OpenXml.Office2016.Drawing.Command;
-using kpk_telegram_bot.Common.Enums;
+﻿using kpk_telegram_bot.Common.Enums;
+using kpk_telegram_bot.Core.Commands;
 
-namespace kpk_telegram_bot.Common.Helpers;
+namespace kpk_telegram_bot.Core.Helpers;
 
 public static class RoleHelper
 {
@@ -12,6 +12,7 @@ public static class RoleHelper
 
     private static readonly Dictionary<string, List<UserRole>> CommandAvailableRoles = new()
     {
-        {nameof(GroupCommand), new List<UserRole> {UserRole.Admin}}
+        {nameof(GroupCommand), new List<UserRole> {UserRole.Admin}},
+        {nameof(ScheduleCommand), new List<UserRole> {UserRole.Admin, UserRole.Student}}
     };
 }

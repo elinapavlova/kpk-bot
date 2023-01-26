@@ -4,8 +4,8 @@ using kpk_telegram_bot.Common.Contracts.HttpClients;
 using kpk_telegram_bot.Common.Contracts.Services;
 using kpk_telegram_bot.Common.Enums;
 using kpk_telegram_bot.Common.Exceptions;
-using kpk_telegram_bot.Common.Helpers;
 using kpk_telegram_bot.Common.Logger;
+using kpk_telegram_bot.Core.Helpers;
 using Telegram.Bot.Types;
 
 namespace kpk_telegram_bot.Core.Services;

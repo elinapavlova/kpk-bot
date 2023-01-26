@@ -32,14 +32,14 @@ public class ScheduleCommand : ICommand
         var words = text.Split(' ');
         if (words.Length != 1)
         {
-            await HandleError(message, text);
+            CommandHelper.ThrowException(string.Empty, text);
             return;
         }
         
         var user = await _userService.GetById(message.From.Id);
         if (user is null)
         {
-            await HandleError(message, text);
+            CommandHelper.ThrowException(string.Empty, text);
             return;
         }
         if (text == "Расписание")
@@ -52,7 +52,7 @@ public class ScheduleCommand : ICommand
         words = words.First().Split('_');
         if (words.Length != 2)
         {
-            await HandleError(message, text);
+            CommandHelper.ThrowException(string.Empty, text);
             return;
         }
 
@@ -63,14 +63,6 @@ public class ScheduleCommand : ICommand
             return;
         }
         await _telegramHttpClient.SendPhotoMessage(message.Chat.Id, ScheduleHelper.CreateMessageText(words[1]), schedule);
-    }
-
-    private async Task HandleError(Message message, string text)
-    {
-        await _telegramHttpClient.SendTextMessage(message.Chat.Id,
-            "Попробуйте перезапустить бот с помощью команды /start и попробовать снова");
-        _logger.Warning("Невалидный запрос на получение расписания {text}. Пользователь {fromId} [{fromUsername}]",
-            text, message.From.Id, message.From.Username);
     }
 
     private static InlineKeyboardMarkup CreateCommandsKeyboard(UserRole userRole)
