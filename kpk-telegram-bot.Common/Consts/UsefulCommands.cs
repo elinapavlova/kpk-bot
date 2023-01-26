@@ -57,6 +57,11 @@ public static class UsefulCommands
             (
                 new List<UserRole> {UserRole.Admin, UserRole.Student}, 
                 new KeyValuePair<string, string>("Расписание", "/schedule_inline_keyboard")
+            ),
+            new 
+            (
+                new List<UserRole> {UserRole.Admin}, 
+                new KeyValuePair<string, string>("Управление группами", "/group")
             )
         });
         return commands;
