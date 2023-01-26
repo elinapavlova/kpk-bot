@@ -12,4 +12,9 @@ public static class GroupMapper
             Id = group.Id, Name = group.Name
         };
     }
+    
+    public static List<GroupResponse> Map(IEnumerable<GroupEntity> groups)
+    {
+        return groups.Select(Map).ToList();
+    }
 }

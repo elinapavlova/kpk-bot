@@ -16,8 +16,30 @@ public class GroupRepository : BaseRepository<GroupEntity, Guid>, IGroupReposito
     {
         return await ExecuteWithResult(async dbSet =>
         {
-            var user = await dbSet.FirstOrDefaultAsync(x => x.Name == name);
-            return user;
+            var group = await dbSet.FirstOrDefaultAsync(x => x.Name == name && x.DateDeleted == null);
+            return group;
+        });
+    }
+    
+    public async Task<IQueryable<GroupEntity>?> GetAll()
+    {
+        return await ExecuteWithResult(async dbSet => dbSet.AsQueryable());
+    }
+
+    public async Task<GroupEntity?> Delete(string name)
+    {
+        return await ExecuteWithResult(async dbSet =>
+        {
+            var group = await dbSet.FirstOrDefaultAsync(x => x.Name == name);
+            if (group is null)
+            {
+                return null;
+            }
+            
+            group.DateDeleted ??= DateTime.Now;
+            group = dbSet.Update(group).Entity;
+            
+            return group;
         });
     }
 }
