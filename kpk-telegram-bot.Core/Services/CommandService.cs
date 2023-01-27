@@ -57,7 +57,7 @@ public class CommandService : ICommandService
         }
         catch (CommandExecuteException e)
         {
-            await _telegramHttpClient.SendTextMessage(message.Chat.Id, e.Message);
+            await _telegramHttpClient.SendTextMessage(message.Chat.Id, string.IsNullOrEmpty(e.Message) ? e.InvalidMessage : e.Message);
             _logger.Warning("Невалидный запрос {text}. Пользователь {fromId} [{fromUsername}]", 
                 e.Details.GetValueOrDefault("text"), message.From.Id, message.From.Username);
         }
