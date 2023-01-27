@@ -9,11 +9,12 @@ public class ServicesProvider : IDependencyProvider
 {
     public void Register(IServiceCollection services)
     {
+        services.AddScoped<IBaseService, BaseService>();
         services.AddScoped<IBotService, BotService>();
         services.AddScoped<ICommandService, CommandService>();
         services.AddScoped<IGoogleDriveService, GoogleDriveService>();
         services.AddScoped<IScheduleService, ScheduleService>();
-        services.AddScoped<IGroupService, GroupService>();
+        services.AddScoped<IItemService, ItemService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
     }

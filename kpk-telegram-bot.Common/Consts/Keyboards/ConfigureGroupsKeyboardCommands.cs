@@ -5,7 +5,7 @@ namespace kpk_telegram_bot.Common.Consts.Keyboards;
 
 public static class ConfigureGroupsKeyboardCommands
 {
-    public static IEnumerable<InlineKeyboardButton> All(IEnumerable<GroupResponse> groups)
+    public static IEnumerable<InlineKeyboardButton> All(IEnumerable<ItemResponse> groups)
     {
         var buttons = List(groups);
         buttons.AddRange( new []
@@ -23,7 +23,7 @@ public static class ConfigureGroupsKeyboardCommands
         return buttons;
     }
     
-    public static List<InlineKeyboardButton> List(IEnumerable<GroupResponse> groups)
+    public static List<InlineKeyboardButton> List(IEnumerable<ItemResponse> groups)
     {
         return groups
             .Select(x => new InlineKeyboardButton

@@ -60,6 +60,7 @@ public class UserRepository : BaseRepository<UserEntity, long>, IUserRepository
             user.RoleId = userForUpdate.RoleId;
             user.DateUpdated = DateTime.Now;
             user.DateDeleted = userForUpdate.DateDeleted;
+            user.IsDeleted = userForUpdate.IsDeleted;
 
             var result = dbSet.Update(user);
             return result.Entity;

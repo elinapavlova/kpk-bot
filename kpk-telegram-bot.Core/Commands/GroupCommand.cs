@@ -1,4 +1,5 @@
-﻿using kpk_telegram_bot.Common.Consts.Keyboards;
+﻿using kpk_telegram_bot.Common.Consts;
+using kpk_telegram_bot.Common.Consts.Keyboards;
 using kpk_telegram_bot.Common.Contracts.Commands;
 using kpk_telegram_bot.Common.Contracts.HttpClients;
 using kpk_telegram_bot.Common.Contracts.Services;
@@ -13,14 +14,14 @@ public class GroupCommand : ICommand
 {
     private readonly ITelegramHttpClient _telegramHttpClient;
     private readonly ILogger _logger;
-    private readonly IGroupService _groupService;
+    private readonly IItemService _groupService;
     private const string GroupConfiguring = "Управление группами";
 
     public GroupCommand
     (
         ITelegramHttpClient telegramHttpClient, 
         ILogger logger,
-        IGroupService groupService
+        IItemService groupService
     )
     {
         _telegramHttpClient = telegramHttpClient;
@@ -31,7 +32,7 @@ public class GroupCommand : ICommand
     public async Task Execute(Message message)
     {
         var text = message.Text.Trim();
-        var groups = await _groupService.GetAll();
+        var groups = await _groupService.GetAll(ItemTypeNames.Group);
         if (groups is null || groups.Count == 0)
         {
             CommandHelper.ThrowException("Не удалось найти список групп", text);
@@ -126,7 +127,7 @@ public class GroupCommand : ICommand
     
     private async Task GetGroupList(User from, string command)
     {
-        var groups = await _groupService.GetAll();
+        var groups = await _groupService.GetAll(ItemTypeNames.Group);
         if (groups is null || groups.Count == 0)
         {
             CommandHelper.ThrowException("Не удалось найти список групп", command);
@@ -138,7 +139,7 @@ public class GroupCommand : ICommand
 
     private async Task DeleteGroup(string groupName, string command, User from)
     {
-        var group = await _groupService.Delete(groupName);
+        var group = await _groupService.Delete(ItemTypeNames.Group, groupName);
         if (group is null)
         {
             CommandHelper.ThrowException($"Группа {groupName} не найдена", command);
@@ -151,7 +152,7 @@ public class GroupCommand : ICommand
     
     private async Task GetCommandByName(string command, User from)
     {
-        var group = await _groupService.GetByName(command);
+        var group = await _groupService.GetByName(ItemTypeNames.Group, command);
         if (group is null)
         {
             CommandHelper.ThrowException($"Группа {command} не найдена", command);
@@ -163,7 +164,7 @@ public class GroupCommand : ICommand
     
     private async Task CreateGroup(string groupName, string command, User from)
     {
-        var group = await _groupService.GetByName(groupName);
+        var group = await _groupService.GetByName(ItemTypeNames.Group, groupName);
         if (group is not null)
         {
             CommandHelper.ThrowException($"Группа {groupName} уже существует", command);

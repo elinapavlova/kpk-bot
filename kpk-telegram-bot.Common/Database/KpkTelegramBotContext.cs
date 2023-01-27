@@ -16,6 +16,38 @@ public class KpkTelegramBotContext : DbContext
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<ItemPropertyTypeEntity>(x =>
+        {
+            x.Property(prop => prop.Name).IsRequired().HasMaxLength(300);
+            x.Property(prop => prop.Value).IsRequired().HasMaxLength(300);
+        });        
+        
+        builder.Entity<ItemPropertyEntity>(x =>
+        {
+            x.Property(prop => prop.Value).IsRequired().HasMaxLength(300);
+
+            x.HasOne(prop => prop.Type)
+                .WithMany(type => type.Properties)
+                .HasForeignKey(prop => prop.TypeId);            
+            
+            x.HasOne(prop => prop.Item)
+                .WithMany(item => item.Properties)
+                .HasForeignKey(prop => prop.ItemId);
+        });
+
+        builder.Entity<ItemTypeEntity>(x =>
+        {
+            x.Property(item => item.Name).IsRequired().HasMaxLength(300);
+            x.Property(item => item.Value).IsRequired().HasMaxLength(300);
+        });        
+        
+        builder.Entity<ItemEntity>(x =>
+        {
+            x.HasOne(prop => prop.Type)
+                .WithMany(type => type.Items)
+                .HasForeignKey(prop => prop.TypeId);  
+        });
+
         builder.Entity<UserEntity>(x =>
         {
             x.Property(user => user.UserName).IsRequired();
@@ -24,11 +56,6 @@ public class KpkTelegramBotContext : DbContext
             x.HasOne(user => user.Group)
                 .WithMany(group => group.Users)
                 .HasForeignKey(user => user.GroupId);
-        });
-
-        builder.Entity<GroupEntity>(x =>
-        {
-            x.Property(group => group.Name).IsRequired();
         });
     }
 }

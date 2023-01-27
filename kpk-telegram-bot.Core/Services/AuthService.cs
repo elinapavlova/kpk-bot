@@ -1,4 +1,5 @@
-﻿using kpk_telegram_bot.Common.Contracts.Services;
+﻿using kpk_telegram_bot.Common.Consts;
+using kpk_telegram_bot.Common.Contracts.Services;
 using kpk_telegram_bot.Common.Database.Entities;
 using kpk_telegram_bot.Common.Enums;
 using kpk_telegram_bot.Common.Logger;
@@ -10,10 +11,10 @@ namespace kpk_telegram_bot.Core.Services;
 public class AuthService : IAuthService
 {
     private readonly IUserService _userService;
-    private readonly IGroupService _groupService;
+    private readonly IItemService _groupService;
     private readonly ILogger _logger;
 
-    public AuthService(IUserService userService, IGroupService groupService, ILogger logger)
+    public AuthService(IUserService userService, IItemService groupService, ILogger logger)
     {
         _userService = userService;
         _groupService = groupService;
@@ -23,7 +24,7 @@ public class AuthService : IAuthService
     public async Task<string> Register(RegisterModel register)
     {
         var username = register.Info[0] + " " + register.Info[1];
-        var group = await _groupService.GetByName(register.Info[2]);
+        var group = await _groupService.GetByName(ItemTypeNames.Group, register.Info[2]);
         if (group is null)
         {
             return "Несуществующая группа! Попробуйте еще раз";

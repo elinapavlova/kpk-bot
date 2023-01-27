@@ -10,6 +10,11 @@ public class RepositoriesProvider : IDependencyProvider
     public void Register(IServiceCollection services)
     {
         services.AddScoped<IUserRepository, UserRepository>();
+        //TODO
         services.AddScoped<IGroupRepository, GroupRepository>();
+        services.AddScoped<IItemRepository, ItemRepository>();
+        services.AddScoped<IItemTypeRepository, ItemTypeRepository>();
+        services.AddScoped<IItemPropertyTypeRepository, ItemPropertyTypeRepository>();
+        services.AddScoped<IItemPropertyRepository, ItemPropertyRepository>();
     }
 }
