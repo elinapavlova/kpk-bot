@@ -2,7 +2,7 @@
 using kpk_telegram_bot.Common.Models;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace kpk_telegram_bot.Common.Consts;
+namespace kpk_telegram_bot.Common.Consts.Keyboards;
 
 public static class ScheduleKeyboardCommands
 {
