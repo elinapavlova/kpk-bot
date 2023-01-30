@@ -4,6 +4,7 @@ using kpk_telegram_bot.Common.Consts.GoogleDrive;
 using kpk_telegram_bot.Common.Contracts.Services;
 using kpk_telegram_bot.Common.Enums;
 using kpk_telegram_bot.Common.Helpers;
+using kpk_telegram_bot.Common.Mappers;
 using kpk_telegram_bot.Common.Options;
 using SautinSoft.Document;
 using Telegram.Bot.Types.InputFiles;
@@ -16,6 +17,7 @@ public class ScheduleService : IScheduleService
     private readonly IGoogleDriveService _googleDriveService;
     private readonly string _archiveScheduleFolderId;
     private readonly string _actualScheduleFolderId;
+    private readonly string _distantScheduleFolderId;
     private readonly string _basePath;
 
     public ScheduleService(IGoogleDriveService googleDriveService, ScheduleInfoOptions scheduleInfoOptions)
@@ -23,6 +25,7 @@ public class ScheduleService : IScheduleService
         _googleDriveService = googleDriveService;
         _archiveScheduleFolderId = scheduleInfoOptions.ArchiveScheduleFolderId;
         _actualScheduleFolderId = scheduleInfoOptions.ActualScheduleFolderId;
+        _distantScheduleFolderId = scheduleInfoOptions.DistanceScheduleFolderId;
         _basePath = scheduleInfoOptions.BasePath;
     }
     
@@ -33,7 +36,8 @@ public class ScheduleService : IScheduleService
             ScheduleType.Actual => await GetActualSchedule(),
             ScheduleType.Today => await GetScheduleForDate(DateTime.Today),
             ScheduleType.Week => await GetWeekSchedule(),
-            ScheduleType.Tomorrow => await GetScheduleForDate(DateTime.Today.AddDays(1))
+            ScheduleType.Tomorrow => await GetScheduleForDate(DateTime.Today.AddDays(1)),
+            ScheduleType.Distant => await GetDistantSchedule()
         };
     }
 
@@ -56,14 +60,15 @@ public class ScheduleService : IScheduleService
             {GoogleDriveQueryParameterType.Contains, new KeyValuePair<string, string>("name", date.Day.ToString())},
         });
         
-        var files = await _googleDriveService.GetFiles(query);
-        if (files is null || files.Count is 0)
+        var schedule = await _googleDriveService.GetFiles(query);
+        if (schedule is null || schedule.Count is 0)
         {
             return null;
         }
 
-        var file = await _googleDriveService.GetFileById(files.First().Id);
-        await CreateScheduleImage(fileName, file);
+        var file = schedule.First();
+        var request = await _googleDriveService.GetFileById(file.Id);
+        await CreateScheduleImage(fileName, request, file.MimeType);
 
         return new List<InputOnlineFile>
         {
@@ -106,6 +111,38 @@ public class ScheduleService : IScheduleService
         return file ?? null;
     }
 
+    private async Task<List<InputOnlineFile>?> GetDistantSchedule()
+    {
+        var query = GoogleDriveQueryBuilder.Build(new Dictionary<GoogleDriveQueryParameterType, KeyValuePair<string, string>>
+        {
+            {GoogleDriveQueryParameterType.NotEquals, new KeyValuePair<string, string>("mimeType", GoogleDriveMimeTypes.Folder)},
+            {GoogleDriveQueryParameterType.In, new KeyValuePair<string, string>("parents", _distantScheduleFolderId)}
+        });
+
+        var schedule = await _googleDriveService.GetFiles(query);
+        if (schedule is null || schedule.Count is 0)
+        {
+            return null;
+        }
+        
+        var file = schedule.First();
+        var fileName = Path.Combine(_basePath,file.Name.Split(".pdf").First());
+        
+        if (File.Exists(GetFileName(fileName, FileTypes.Jpg)) is false)
+        {
+            if (string.IsNullOrEmpty(file.Id))
+            {
+                return null;
+            }
+            var request = await _googleDriveService.GetFileById(file.Id);
+            await CreateScheduleImage(fileName, request, file.MimeType);
+        }
+        
+        var result = new InputOnlineFile(OpenFileForRead(fileName, FileTypes.Jpg), 
+            GetFileName(file.Name, FileTypes.Jpg));
+        return new List<InputOnlineFile> { result };
+    }
+
     private async Task<List<InputOnlineFile>?> GetActualSchedule()
     {
         var query = GoogleDriveQueryBuilder.Build(new Dictionary<GoogleDriveQueryParameterType, KeyValuePair<string, string>>
@@ -128,13 +165,13 @@ public class ScheduleService : IScheduleService
         {
             if (File.Exists(GetFileName(x.Value, FileTypes.Jpg)) is false)
             {
-                var fileId = schedule.FirstOrDefault(f => f.Name.StartsWith(x.Key))?.Id;
-                if (string.IsNullOrEmpty(fileId))
+                var file = schedule.FirstOrDefault(f => f.Name.StartsWith(x.Key));
+                if (string.IsNullOrEmpty(file?.Id))
                 {
                     continue;
                 }
-                var file = await _googleDriveService.GetFileById(fileId);
-                await CreateScheduleImage(x.Value, file);
+                var request = await _googleDriveService.GetFileById(file.Id);
+                await CreateScheduleImage(x.Value, request, file.MimeType);
             }
             files.Add(new InputOnlineFile(OpenFileForRead(x.Value, FileTypes.Jpg), GetFileName(x.Key, FileTypes.Jpg)));
         }
@@ -154,9 +191,9 @@ public class ScheduleService : IScheduleService
         {
             if (File.Exists(GetFileName(x.Value, FileTypes.Jpg)) is false)
             {
-                var fileId = schedule.FirstOrDefault(f => f.Name.Contains(x.Key)).Id;
-                var file = await _googleDriveService.GetFileById(fileId);
-                await CreateScheduleImage(x.Value, file);
+                var file = schedule.FirstOrDefault(f => f.Name.Contains(x.Key));
+                var request = await _googleDriveService.GetFileById(file.Id);
+                await CreateScheduleImage(x.Value, request, file.MimeType);
             }
             files.Add(new InputOnlineFile(OpenFileForRead(x.Value, FileTypes.Jpg), GetFileName(x.Key, FileTypes.Jpg)));
         }
@@ -189,19 +226,19 @@ public class ScheduleService : IScheduleService
         return schedule;
     }
     
-    private static async Task CreateScheduleImage(string fileName, FilesResource.GetRequest file)
+    private static async Task CreateScheduleImage(string fileName, FilesResource.GetRequest file, string mimeType)
     {
-        await using (var fileStream = new FileStream(GetFileName(fileName, FileTypes.Docx), FileMode.Create, FileAccess.Write))
+        await using (var fileStream = new FileStream(GetFileName(fileName, FileTypeMapper.Map(mimeType)), FileMode.Create, FileAccess.Write))
         {
             file.Download(fileStream);
         }
 
-        var dc = DocumentCore.Load(GetFileName(fileName, FileTypes.Docx));
+        var dc = DocumentCore.Load(GetFileName(fileName, FileTypeMapper.Map(mimeType)));
         dc.Save(GetFileName(fileName, FileTypes.Jpg));
 
         ScheduleHelper.RemoveTempFiles(new List<string>
         {
-            GetFileName(fileName, FileTypes.Docx)
+            GetFileName(fileName, FileTypeMapper.Map(mimeType))
         });
     }
 

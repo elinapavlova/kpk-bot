@@ -55,6 +55,7 @@ public static class ScheduleHelper
             ScheduleType.Today => "Расписание на сегодня",
             ScheduleType.Week => "Расписание на неделю",
             ScheduleType.Tomorrow => "Расписание на завтра",
+            ScheduleType.Distant => "Заочники",
             _ => throw new Exception($"Невалидный тип расписания {type}")
         };
     }

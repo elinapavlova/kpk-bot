@@ -12,6 +12,7 @@ public static class ScheduleTypeMapper
             "week" => ScheduleType.Week,
             "actual" => ScheduleType.Actual,
             "tomorrow" => ScheduleType.Tomorrow,
+            "distant" => ScheduleType.Distant,
             _ => throw new Exception($"Невалидный тип расписания {type}")
         };
     }
