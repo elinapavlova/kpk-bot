@@ -6,7 +6,6 @@ namespace kpk_telegram_bot.Common.Database;
 public class KpkTelegramBotContext : DbContext
 {
     public DbSet<UserEntity> Users { get; set; }
-    public DbSet<GroupEntity> Groups { get; set; }
 
     public KpkTelegramBotContext(DbContextOptions<KpkTelegramBotContext> options) : base(options)         
     {
@@ -54,7 +53,7 @@ public class KpkTelegramBotContext : DbContext
             x.Property(user => user.RoleId).IsRequired();
             
             x.HasOne(user => user.Group)
-                .WithMany(group => group.Users)
+                .WithMany(item => item.Users)
                 .HasForeignKey(user => user.GroupId);
         });
     }

@@ -12,7 +12,7 @@ public static class UserMapper
         {
             Id = user.Id, 
             UserName = user.UserName, 
-            GroupName = user.Group?.Name ?? "Не определена", 
+            GroupName = user.Group?.Properties.FirstOrDefault(x => x.Type.Name.Equals("GroupName"))?.Value ?? "Не определена", 
             Role = (UserRole)user.RoleId
         };
     }

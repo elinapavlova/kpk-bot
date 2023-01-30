@@ -8,5 +8,5 @@ public class UserEntity : BaseEntity<long>
     public uint RoleId { get; set; }
     public Guid? GroupId { get; set; }
     
-    public GroupEntity? Group { get; set; }
+    public ItemEntity? Group { get; set; }
 }
