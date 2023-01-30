@@ -55,7 +55,8 @@ public class UserService : IUserService
             _logger.Error($"Попытка выхода пользователя, которого нет в БД {userId}");
             return;
         }
-        
+
+        user.IsDeleted = true;
         user.DateDeleted = DateTime.Now;
         
         var result = await _userRepository.Update(user);
