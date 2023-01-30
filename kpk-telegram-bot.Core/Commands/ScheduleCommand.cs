@@ -1,4 +1,4 @@
-﻿using kpk_telegram_bot.Common.Consts;
+﻿using kpk_telegram_bot.Common.Consts.Keyboards;
 using kpk_telegram_bot.Common.Contracts.Commands;
 using kpk_telegram_bot.Common.Contracts.HttpClients;
 using kpk_telegram_bot.Common.Contracts.Services;

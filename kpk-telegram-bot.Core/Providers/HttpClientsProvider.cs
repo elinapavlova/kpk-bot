@@ -1,5 +1,4 @@
-﻿using kpk_telegram_bot.Common.Contracts;
-using kpk_telegram_bot.Common.Contracts.HttpClients;
+﻿using kpk_telegram_bot.Common.Contracts.HttpClients;
 using kpk_telegram_bot.Common.Contracts.Providers;
 using kpk_telegram_bot.Core.HttpClients;
 using Microsoft.Extensions.DependencyInjection;

@@ -2,7 +2,7 @@
 
 namespace kpk_telegram_bot.Common.Helpers;
 
-public class UpdateHelper
+public static class UpdateHelper
 {
     public static Message CallbackQueryToMessage(CallbackQuery callbackQuery)
     {
