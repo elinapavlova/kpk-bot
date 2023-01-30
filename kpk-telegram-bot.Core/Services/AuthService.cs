@@ -32,7 +32,7 @@ public class AuthService : IAuthService
         
         var user = await _userService.CreateOrUpdate(new UserEntity
         {
-            Id = register.Id, UserName = username, GroupId = group.Id, RoleId = (uint)UserRole.Student
+            Id = register.Id, UserName = username, GroupId = group.Id, RoleId = GetUserRoleId(group.Name)
         });
 
         if (user is null)
@@ -66,5 +66,12 @@ public class AuthService : IAuthService
         }
         
         _logger.Information("Пользователь с Id {userId} перезапустил бот", userId);
+    }
+
+    private static uint GetUserRoleId(string groupName)
+    {
+        return groupName.ToLower().Contains("пз")
+            ? (uint)UserRole.Student
+            : (uint)UserRole.Distant;
     }
 }
