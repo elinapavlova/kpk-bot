@@ -14,7 +14,7 @@ public class UserRepository : BaseRepository<UserEntity, long>, IUserRepository
 
     public async Task<UserEntity?> GetById(long userId)
     {
-        return await ExecuteWithResult(async dbSet =>
+        return await ExecuteWithoutSavingResult(async dbSet =>
         {
             var user = await dbSet.FirstOrDefaultAsync(x => x.Id == userId);
             return user;
@@ -23,7 +23,7 @@ public class UserRepository : BaseRepository<UserEntity, long>, IUserRepository
     
     public async Task<bool> IsExist(long userId)
     {
-        return await ExecuteWithResult(async dbSet =>
+        return await ExecuteWithoutSavingResult(async dbSet =>
         {
             var user = await dbSet.AnyAsync(x => x.Id == userId);
             return user;

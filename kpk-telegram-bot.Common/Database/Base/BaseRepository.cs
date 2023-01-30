@@ -32,6 +32,13 @@ public abstract class BaseRepository<TModel, TKey> : IBaseRepository<TModel, TKe
         await _context.SaveChangesAsync();
         return result;
     }
+    
+    protected async Task<TResult> ExecuteWithoutSavingResult<TResult>(Func<DbSet<TModel>, Task<TResult>> func)
+    {
+        var dbSet = _context.Set<TModel>();
+        var result = await func(dbSet);
+        return result;
+    }
 
     public async Task<TransactionContainer?> BeginTransaction()
     {
