@@ -45,6 +45,10 @@ public class KpkTelegramBotContext : DbContext
             x.HasOne(prop => prop.Type)
                 .WithMany(type => type.Items)
                 .HasForeignKey(prop => prop.TypeId);  
+            
+            x.HasOne(prop => prop.Parent)
+                .WithMany(item => item.Childs)
+                .HasForeignKey(prop => prop.ParentId);  
         });
 
         builder.Entity<UserEntity>(x =>
