@@ -33,6 +33,7 @@ public class CommandService : ICommandService
     
     public async Task Execute(Message message)
     {
+        message.Text ??= message.Caption;
         var commandName = message.Text.StartsWith('/') 
             ? message.Text.Trim().Split(' ').FirstOrDefault() 
             : message.Text.Trim();
@@ -63,8 +64,8 @@ public class CommandService : ICommandService
         }
         catch (Exception e)
         {
-            _logger.Error("Failed execute command {commandName} by user {userId}\r\nException:{exception}",
-                command.GetType().Name,message.From.Id, e);
+            _logger.Error("Не удалось выполнить команду {commandName} пользователем {userId}\r\nСообщение: {text}\r\nException:{exception}",
+                command.GetType().Name, message.Text, message.From.Id, e);
         }
     }
     
