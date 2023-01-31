@@ -11,5 +11,6 @@ public enum LessonType
     Consultation = 7,
     Exam = 8,
     Test = 9, // Зачет
-    Other = 10
+    Other = 10,
+    IndependentPractice = 11
 }
