@@ -5,6 +5,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
+using File = Telegram.Bot.Types.File;
 
 namespace kpk_telegram_bot.Core.HttpClients;
 
@@ -76,5 +77,10 @@ public class TelegramHttpClient : ITelegramHttpClient
             .Select(x => new InputMediaPhoto(new InputMedia(x.Content, x.FileName))));
 
         await _bot.SendMediaGroupAsync(chatId, media);
+    }
+
+    public async Task<File> GetFileById(string fileId, MemoryStream stream)
+    {
+        return await _bot.GetInfoAndDownloadFileAsync(fileId, stream);
     }
 }
