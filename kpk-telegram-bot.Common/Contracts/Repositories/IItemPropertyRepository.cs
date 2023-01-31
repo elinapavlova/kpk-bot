@@ -8,4 +8,6 @@ public interface IItemPropertyRepository : IBaseRepository<ItemPropertyEntity, G
     Task<ItemPropertyEntity?> GetById(Guid itemId);
     Task<ItemPropertyEntity?> Create(ItemPropertyEntity newItem);
     Task<ItemPropertyEntity?> Update(ItemPropertyEntity itemForUpdate);
+    Task<IQueryable<ItemPropertyEntity>> GetAll();
+    Task<IQueryable<ItemPropertyEntity>> GetByTypeId(Guid typeId);
 }

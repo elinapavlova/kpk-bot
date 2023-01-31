@@ -66,7 +66,7 @@ public class ItemTypeRepository : BaseRepository<ItemTypeEntity, Guid>, IItemTyp
         return await ExecuteWithResult(async dbSet =>
         {
             var item = await dbSet
-                .Where(x => x.Name.Equals(name))
+                .Where(x => x.Name.ToLower().Equals(name))
                 .Include(x => x.Items)
                 .FirstOrDefaultAsync();
 

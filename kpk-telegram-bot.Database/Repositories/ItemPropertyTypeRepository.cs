@@ -60,4 +60,17 @@ public class ItemPropertyTypeRepository : BaseRepository<ItemPropertyTypeEntity,
             return result.Entity;
         });
     }
+    
+    public async Task<ItemPropertyTypeEntity?> GetByName(string name)
+    {
+        return await ExecuteWithResult(async dbSet =>
+        {
+            var item = await dbSet
+                .Where(x => x.Name.Equals(name))
+                .Include(x => x.Properties)
+                .FirstOrDefaultAsync();
+
+            return item;
+        });
+    }
 }

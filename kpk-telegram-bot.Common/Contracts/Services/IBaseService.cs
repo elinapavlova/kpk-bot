@@ -5,6 +5,7 @@ namespace kpk_telegram_bot.Common.Contracts.Services;
 
 public interface IBaseService
 {
-    Task<IQueryable<ItemEntity>> Filter(FilterParam param);
+    Task<IQueryable<ItemEntity>> Filter(ItemFilterParam param);
+    Task<IQueryable<ItemPropertyEntity>> Filter(PropertyFilterParam param);
     Task<Guid?> GetTypeIdByName(string name);
 }

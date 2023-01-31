@@ -30,7 +30,7 @@ public class ItemPropertyRepository : BaseRepository<ItemPropertyEntity, Guid>, 
     {
         return await ExecuteWithResult(async dbSet =>
         {
-            var isItemExist = await dbSet.AnyAsync(x => x.Id == newItem.Id);
+            var isItemExist = await dbSet.AnyAsync(x => newItem.Id != Guid.Empty && x.Id == newItem.Id);
             if (isItemExist)
             {
                 return null;
@@ -58,6 +58,32 @@ public class ItemPropertyRepository : BaseRepository<ItemPropertyEntity, Guid>, 
 
             var result = dbSet.Update(item);
             return result.Entity;
+        });
+    }
+
+    public async Task<IQueryable<ItemPropertyEntity>> GetAll()
+    {
+        return await ExecuteWithResult(async dbSet =>
+        {
+            var items = dbSet
+                .Include(x => x.Item)
+                .Include(x => x.Type);
+            
+            return items;
+        });
+    }
+    
+    public async Task<IQueryable<ItemPropertyEntity>> GetByTypeId(Guid typeId)
+    {
+        return await ExecuteWithResult(async dbSet =>
+        {
+            var items = dbSet
+                .Where(x => x.TypeId == typeId)
+                .Include(x => x.Item)
+                .Include(x => x.Type)
+                .AsQueryable();
+            
+            return items;
         });
     }
 }
