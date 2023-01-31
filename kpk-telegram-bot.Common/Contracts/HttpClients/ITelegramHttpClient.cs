@@ -2,6 +2,7 @@
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
+using File = Telegram.Bot.Types.File;
 
 namespace kpk_telegram_bot.Common.Contracts.HttpClients;
 
@@ -18,4 +19,5 @@ public interface ITelegramHttpClient
     Task EditTextMessage(long chatId, int messageId, string text);
     Task SendPhotoMessage(long groupChatId, string text, string url);
     Task SendPhotoMessage(long chatId, string text, List<InputOnlineFile>? files);
+    Task<File> GetFileById(string fileId, MemoryStream stream);
 }
