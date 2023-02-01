@@ -73,4 +73,17 @@ public class ItemPropertyTypeRepository : BaseRepository<ItemPropertyTypeEntity,
             return item;
         });
     }
+
+    public async Task<List<ItemPropertyTypeEntity>> GetByItemTypeId(Guid itemTypeId)
+    {
+        return await ExecuteWithResult(async dbSet =>
+        {
+            var items = await dbSet
+                .Where(x => x.ItemTypeId == itemTypeId)
+                .Include(x => x.Properties)
+                .ToListAsync();
+
+            return items;
+        });
+    }
 }

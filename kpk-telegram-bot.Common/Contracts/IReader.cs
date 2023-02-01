@@ -2,5 +2,5 @@
 
 public interface IReader
 {
-    Task Import(MemoryStream stream);
+    Task Import(string subjectName, MemoryStream stream);
 }

@@ -84,6 +84,8 @@ public class ItemRepository : BaseRepository<ItemEntity, Guid>, IItemRepository
                 .ThenInclude(x => x.Type)
                 .Include(x => x.Type)
                 .Include(x => x.Childs)
+                .ThenInclude(x => x.Type)
+                .Include(x => x.Childs)
                 .ThenInclude(x => x.Properties)
                 .ThenInclude(x => x.Type)
                 .AsQueryable();

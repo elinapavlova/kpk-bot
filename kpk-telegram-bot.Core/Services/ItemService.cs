@@ -108,7 +108,6 @@ public class ItemService : IItemService
     public async Task<ItemResponse?> Create(ItemCreateModel model)
     {
         await CheckExisting(model.ParentId, model.TypeId);
-        var existingItem = await CheckExistingLesson(model.TypeId, model.Properties.First(x => x.TypeId == Guid.Parse("0C850D51-4516-4191-9D5D-959F4026898A")).Value);
 
         await using var transaction = await _itemRepository.BeginTransaction();
         try
@@ -118,13 +117,6 @@ public class ItemService : IItemService
                 throw new Exception("Не удалось запустить транзакцию");
             }
 
-            if (existingItem is not null)
-            {
-                await UpdateProperties(model.Properties, existingItem.Properties);
-                existingItem = await _itemRepository.Update(existingItem);
-                return ItemMapper.Map(existingItem);
-            }
-        
             var item = await _itemRepository.Create(new ItemEntity
             {
                 TypeId = model.TypeId, ParentId = model.ParentId
@@ -167,33 +159,5 @@ public class ItemService : IItemService
         }
     }
 
-    private async Task<ItemEntity?> CheckExistingLesson(Guid typeId, string lessonNumber)
-    {
-        var filter = await _baseService.Filter(new ItemFilterParam
-        {
-            EntitiesState = EntitiesState.Actual, TypeFilter = typeId, PropertiesFilter = new Dictionary<string, string>()
-            {
-                {"LessonNumber", lessonNumber}
-            }
-        });
-        var result = await filter.FirstOrDefaultAsync();
-        return result;
-    }
-
-    private async Task UpdateProperties(List<ItemPropertyCreateModel> propertiesForUpdate, List<ItemPropertyEntity> properties)
-    {
-        foreach (var item in properties)
-        {
-            var newValue = propertiesForUpdate.FirstOrDefault(x => x.TypeId == item.TypeId)?.Value;
-            if (item.Value.Equals(newValue))
-            {
-                continue;
-            }
-            
-            item.Value = newValue;
-            await _propertyService.Update(item);
-        }
-    }
-    
     #endregion
 }

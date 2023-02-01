@@ -9,4 +9,5 @@ public interface IItemPropertyTypeRepository : IBaseRepository<ItemPropertyTypeE
     Task<ItemPropertyTypeEntity?> Create(ItemPropertyTypeEntity newItem);
     Task<ItemPropertyTypeEntity?> Update(ItemPropertyTypeEntity itemForUpdate);
     Task<ItemPropertyTypeEntity?> GetByName(string name);
+    Task<List<ItemPropertyTypeEntity>> GetByItemTypeId(Guid itemTypeId);
 }

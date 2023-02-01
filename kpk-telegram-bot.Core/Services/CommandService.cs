@@ -5,8 +5,10 @@ using kpk_telegram_bot.Common.Contracts.Services;
 using kpk_telegram_bot.Common.Enums;
 using kpk_telegram_bot.Common.Exceptions;
 using kpk_telegram_bot.Common.Logger;
+using kpk_telegram_bot.Core.Commands;
 using kpk_telegram_bot.Core.Helpers;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace kpk_telegram_bot.Core.Services;
 
@@ -34,7 +36,10 @@ public class CommandService : ICommandService
     public async Task Execute(Message message)
     {
         message.Text ??= message.Caption;
-        var commandName = message.Text.StartsWith('/') 
+
+        var commandName = message.Type == MessageType.Document 
+        ? _commands.FirstOrDefault(x => x.Value.ToString().Contains(nameof(ImportCommand))).Key
+        : message.Text.StartsWith('/') 
             ? message.Text.Trim().Split(' ').FirstOrDefault() 
             : message.Text.Trim();
         
@@ -65,7 +70,7 @@ public class CommandService : ICommandService
         catch (Exception e)
         {
             _logger.Error("Не удалось выполнить команду {commandName} пользователем {userId}\r\nСообщение: {text}\r\nException:{exception}",
-                command.GetType().Name, message.Text, message.From.Id, e);
+                command.GetType().Name, message.From.Id, message.Text, e);
         }
     }
     

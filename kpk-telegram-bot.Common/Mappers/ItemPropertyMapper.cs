@@ -12,7 +12,7 @@ public static class ItemPropertyMapper
         {
             Id = property.Id,
             Value = property.Value,
-            Type = property.Type.Name
+            Type = PropertyTypeMapper.Map(property.Type)
         };
     }
 
@@ -30,5 +30,21 @@ public static class ItemPropertyMapper
             TypeId = model.TypeId,
             Value = model.Value
         };
+    }
+
+    public static ItemPropertyEntity Map(PropertyResponse property)
+    {
+        return new ItemPropertyEntity
+        {
+            Id = property.Id,
+            Value = property.Value,
+            TypeId = property.Type.Id,
+            Type = PropertyTypeMapper.Map(property.Type)
+        };
+    }
+
+    public static List<ItemPropertyEntity> Map(List<PropertyResponse> properties)
+    {
+        return properties.Select(Map).ToList();
     }
 }
