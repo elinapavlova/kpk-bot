@@ -7,4 +7,5 @@ public class ItemTypeEntity : BaseEntity<Guid>
     public string Name { get; set; }
     public string Value { get; set; }
     public List<ItemEntity> Items { get; set; }
+    public List<ItemPropertyTypeEntity> PropertyTypes { get; set; }
 }

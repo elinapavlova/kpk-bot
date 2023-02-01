@@ -19,6 +19,10 @@ public class KpkTelegramBotContext : DbContext
         {
             x.Property(prop => prop.Name).IsRequired().HasMaxLength(300);
             x.Property(prop => prop.Value).IsRequired().HasMaxLength(300);
+            
+            x.HasOne(prop => prop.ItemType)
+                .WithMany(itemType => itemType.PropertyTypes)
+                .HasForeignKey(prop => prop.ItemTypeId);  
         });        
         
         builder.Entity<ItemPropertyEntity>(x =>

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using kpk_telegram_bot.Common.Database;
 
@@ -10,9 +11,10 @@ using kpk_telegram_bot.Common.Database;
 namespace kpk_telegram_bot.Migrations
 {
     [DbContext(typeof(KpkTelegramBotContext))]
-    partial class KpkTelegramBotContextModelSnapshot : ModelSnapshot
+    [Migration("20230201090733_AddFKItemTypeId")]
+    partial class AddFKItemTypeId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.11");
@@ -106,7 +108,7 @@ namespace kpk_telegram_bot.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("ItemTypeId")
+                    b.Property<Guid?>("ItemTypeId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -234,9 +236,7 @@ namespace kpk_telegram_bot.Migrations
                 {
                     b.HasOne("kpk_telegram_bot.Common.Database.Entities.ItemTypeEntity", "ItemType")
                         .WithMany("PropertyTypes")
-                        .HasForeignKey("ItemTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ItemTypeId");
 
                     b.Navigation("ItemType");
                 });
