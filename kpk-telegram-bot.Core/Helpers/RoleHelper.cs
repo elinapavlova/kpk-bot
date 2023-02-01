@@ -13,6 +13,7 @@ public static class RoleHelper
     private static readonly Dictionary<string, List<UserRole>> CommandAvailableRoles = new()
     {
         {nameof(GroupCommand), new List<UserRole> {UserRole.Admin}},
-        {nameof(ScheduleCommand), new List<UserRole> {UserRole.Admin, UserRole.Student, UserRole.Distant}}
+        {nameof(ScheduleCommand), new List<UserRole> {UserRole.Admin, UserRole.Student, UserRole.Distant}},
+        {nameof(ImportCommand), new List<UserRole> {UserRole.Admin}}
     };
 }

@@ -89,28 +89,34 @@ public class TelegramBotHandler : ITelegramBotHandler
         //TODO запрет на использование в группах
         //TODO принимать excel
         // Если сообщение не текст - игнорировать
-        if (message.Type != MessageType.Text)
+        if (message.Type != MessageType.Text && message.Type != MessageType.Document)
         {
             return;
         }
         try
         {
-            var words = message.Text.Split(' ');
-            //TODO переделать
-            if (await _userService.CheckExist(message.From.Id) is false)
+            if (string.IsNullOrEmpty(message.Text) is false)
             {
-                if (words.Length != 3)
+                var words = message.Text?.Split(' ');
+                //TODO переделать
+                if (await _userService.CheckExist(message.From.Id) is false)
                 {
-                    await _telegramHttpClient.SendTextMessage(message.Chat.Id, "Вы новенький! Отправьте информацию о себе\r\n" +
-                                                                               "Пример: Иванов Иван 1-1П9");
-                }
-                if (words.Length != 3)
-                {
+                    if (words.Length != 3)
+                    {
+                        await _telegramHttpClient.SendTextMessage(message.Chat.Id,
+                            "Вы новенький! Отправьте информацию о себе\r\n" +
+                            "Пример: Иванов Иван 1-1П9");
+                    }
+
+                    if (words.Length != 3)
+                    {
+                        return;
+                    }
+
+                    var result = await _authService.Register(new RegisterModel(message.From.Id, words));
+                    await _telegramHttpClient.SendTextMessage(message.Chat.Id, result);
                     return;
                 }
-                var result = await _authService.Register(new RegisterModel(message.From.Id, words));
-                await _telegramHttpClient.SendTextMessage(message.Chat.Id, result);
-                return;
             }
             if (await _userService.IsActual(message.From.Id) is false)
             {
