@@ -14,6 +14,8 @@ public static class RoleHelper
     {
         {nameof(GroupCommand), new List<UserRole> {UserRole.Admin}},
         {nameof(ScheduleCommand), new List<UserRole> {UserRole.Admin, UserRole.Student, UserRole.Distant}},
-        {nameof(ImportCommand), new List<UserRole> {UserRole.Admin}}
+        {nameof(ImportCommand), new List<UserRole> {UserRole.Admin}},
+        {nameof(StartCommand), new List<UserRole> {UserRole.Admin, UserRole.Student, UserRole.Distant}},
+        {nameof(PlainCommand), new List<UserRole> {UserRole.Admin}}
     };
 }

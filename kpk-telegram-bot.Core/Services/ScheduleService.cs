@@ -203,6 +203,7 @@ public class ScheduleService : IScheduleService
 
     private async Task<string> GetArchiveScheduleFolderId()
     {
+        //TODO если архива еще нет (начало месяца)
         var monthNumber = DateTime.Today.Month < 10 ? $"0{DateTime.Today.Month}" : DateTime.Today.Month.ToString();
         var query = GoogleDriveQueryBuilder.Build(new Dictionary<GoogleDriveQueryParameterType, KeyValuePair<string, string>>
         {

@@ -138,6 +138,24 @@ public class ItemService : IItemService
         }
     }
 
+    public async Task<List<ItemPropertyEntity>?> GetListByTypeName(string name)
+    {
+        name = name.Trim().ToLower();
+        if (string.IsNullOrEmpty(name))
+        {
+            return null;
+        }
+
+        var filter = await _baseService.Filter(new ItemFilterParam
+        {
+            EntitiesState = EntitiesState.Actual,
+            TypeFilter = await _baseService.GetTypeIdByName(name)
+        });
+
+        var result = await filter.FirstOrDefaultAsync();
+        return result?.Properties;
+    }
+
     #region Checking
 
     private async Task CheckExisting(Guid? parentId, Guid typeId)

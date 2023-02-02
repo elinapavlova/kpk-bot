@@ -14,6 +14,7 @@ public class CommandsProvider : IDependencyProvider
         services.AddScoped<ICommand, MyMarksCommand>();
         services.AddScoped<ICommand, GroupCommand>();
         services.AddScoped<ICommand, ImportCommand>();
+        services.AddScoped<ICommand, PlainCommand>();
         
         services.AddScoped<CommandContainer>();
     }

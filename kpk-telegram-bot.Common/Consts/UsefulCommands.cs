@@ -46,7 +46,7 @@ public static class UsefulCommands
             new 
             (
                 new List<UserRole> {UserRole.Admin, UserRole.Student}, 
-                new KeyValuePair<string, string>("Учебный план", "/plain")
+                new KeyValuePair<string, string>("Учебный план", "/plain_inline_keyboard")
             ),
             new 
             (

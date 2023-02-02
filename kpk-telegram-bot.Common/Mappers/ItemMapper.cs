@@ -12,6 +12,7 @@ public static class ItemMapper
             Id = group.Id, 
             Name = group.Properties.FirstOrDefault(x => x.Type.Name.Contains("Name"))?.Value ?? "Ошибка",
             Type = group.Type.Name,
+            ParentId = group.ParentId,
             Items = group.Childs is null ? null : Map(group.Childs),
             Properties = group.Properties is null ? null : ItemPropertyMapper.Map(group.Properties)
         };

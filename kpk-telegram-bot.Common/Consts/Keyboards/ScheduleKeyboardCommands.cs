@@ -14,10 +14,10 @@ public static class ScheduleKeyboardCommands
             .ToList();
     }
 
-    private static IEnumerable<ScheduleKeyboardByRolesModel> All()
+    private static IEnumerable<KeyboardByRolesModel> All()
     {
-        var commands = new List<ScheduleKeyboardByRolesModel>();
-        commands.AddRange(new List<ScheduleKeyboardByRolesModel>
+        var commands = new List<KeyboardByRolesModel>();
+        commands.AddRange(new List<KeyboardByRolesModel>
         {
             new
             (

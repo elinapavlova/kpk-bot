@@ -3,9 +3,9 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace kpk_telegram_bot.Common.Models;
 
-public class ScheduleKeyboardByRolesModel
+public class KeyboardByRolesModel
 {
-    public ScheduleKeyboardByRolesModel(List<UserRole> roles, KeyValuePair<string, string> inlineButtonData)
+    public KeyboardByRolesModel(List<UserRole> roles, KeyValuePair<string, string> inlineButtonData)
     {
         Roles = roles;
         InlineButton = new InlineKeyboardButton
