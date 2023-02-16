@@ -99,7 +99,7 @@ public class ScheduleService : IScheduleService
     }
 
     private static InputOnlineFile? GetFile(string number, IEnumerable<InputOnlineFile>? actualSchedule, 
-        IEnumerable<InputOnlineFile> archiveSchedule)
+        IEnumerable<InputOnlineFile>? archiveSchedule)
     {
         var file = actualSchedule?.FirstOrDefault(y => y.FileName.StartsWith(number));
         if (file is not null)
@@ -107,7 +107,7 @@ public class ScheduleService : IScheduleService
             return file;
         }  
             
-        file = archiveSchedule.FirstOrDefault(y => y.FileName.StartsWith(number));
+        file = archiveSchedule?.FirstOrDefault(y => y.FileName.StartsWith(number));
         return file ?? null;
     }
 
@@ -179,9 +179,13 @@ public class ScheduleService : IScheduleService
         return files.OrderBy(x => x.FileName).ToList();
     }
     
-    private async Task<List<InputOnlineFile>> GetArchiveSchedule()
+    private async Task<List<InputOnlineFile>?> GetArchiveSchedule()
     {
         var folderId = await GetArchiveScheduleFolderId();
+        if (string.IsNullOrEmpty(folderId))
+        {
+            return null;
+        }
         var schedule = await GetArchiveScheduleDays(folderId);
         var names = schedule?.Select(x => x.Name.Split(' ').First());
         var fileNames = names.ToDictionary(x => x, x => Path.Combine(_basePath, $"{x}.{DateTime.Today.Month}"));
@@ -201,9 +205,8 @@ public class ScheduleService : IScheduleService
         return files.OrderBy(x => x.FileName).ToList();
     }
 
-    private async Task<string> GetArchiveScheduleFolderId()
+    private async Task<string?> GetArchiveScheduleFolderId()
     {
-        //TODO если архива еще нет (начало месяца)
         var monthNumber = DateTime.Today.Month < 10 ? $"0{DateTime.Today.Month}" : DateTime.Today.Month.ToString();
         var query = GoogleDriveQueryBuilder.Build(new Dictionary<GoogleDriveQueryParameterType, KeyValuePair<string, string>>
         {
@@ -213,7 +216,7 @@ public class ScheduleService : IScheduleService
         });
 
         var schedule = await _googleDriveService.GetFiles(query);
-        return schedule.First().Id;
+        return schedule?.First().Id;
     }    
     
     private async Task<IList<Google.Apis.Drive.v3.Data.File>?> GetArchiveScheduleDays(string folderId)
