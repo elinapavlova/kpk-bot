@@ -14,7 +14,8 @@ public static class UpdateHelper
             Chat = new Chat 
             {
                 Id = callbackQuery.From.Id
-            }
+            },
+            MessageId = callbackQuery.Message.MessageId
         };
     }
 }

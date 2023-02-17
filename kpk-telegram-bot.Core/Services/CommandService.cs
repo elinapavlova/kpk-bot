@@ -88,7 +88,7 @@ public class CommandService : ICommandService
     private async Task<bool> CheckUserRoleAvailable(long userId, string command)
     {
         var user = await _userService.GetById(userId);
-        var isAvailable = RoleHelper.CheckRole(user?.RoleId, command);
+        var isAvailable = RoleHelper.CheckRole(user?.RoleId ?? (int)UserRole.Guest, command);
         if (isAvailable is not true)
         {
             _logger.Warning("Недостаточно прав пользователя {userId} с ролью {role} для команды {command}",

@@ -21,17 +21,16 @@ public class StartCommand : ICommand
     
     public async Task Execute(Message message)
     {
-        ReplyKeyboardMarkup? keyboard;
-        
         var user = await _userService.GetById(message.From.Id);
         if (user is null)
         {
-            keyboard = CreateCommandsKeyboardByRole(UserRole.Student);
-            await _telegramHttpClient.SendTextMessage(message.Chat.Id, "Меню", keyboard);
+            await _telegramHttpClient.SendTextMessage(message.Chat.Id,
+                "Вы новенький! Отправьте информацию о себе\r\n" +
+                "Пример: Иванов Иван 1-1П9");
             return;
         }
         
-        keyboard = CreateCommandsKeyboardByRole((UserRole)user.RoleId);
+        var keyboard = CreateCommandsKeyboardByRole((UserRole)user.RoleId);
         await _telegramHttpClient.SendTextMessage(message.Chat.Id, "Меню", keyboard);
     }
     

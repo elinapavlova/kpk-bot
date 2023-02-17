@@ -14,5 +14,6 @@ public class RepositoriesProvider : IDependencyProvider
         services.AddScoped<IItemTypeRepository, ItemTypeRepository>();
         services.AddScoped<IItemPropertyTypeRepository, ItemPropertyTypeRepository>();
         services.AddScoped<IItemPropertyRepository, ItemPropertyRepository>();
+        services.AddScoped<IRequestRepository, RequestRepository>();
     }
 }

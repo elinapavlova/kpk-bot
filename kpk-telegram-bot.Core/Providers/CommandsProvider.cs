@@ -15,6 +15,7 @@ public class CommandsProvider : IDependencyProvider
         services.AddScoped<ICommand, GroupCommand>();
         services.AddScoped<ICommand, ImportCommand>();
         services.AddScoped<ICommand, PlainCommand>();
+        services.AddScoped<ICommand, AuthCommand>();
         
         services.AddScoped<CommandContainer>();
     }

@@ -22,5 +22,6 @@ public class ServicesProvider : IDependencyProvider
         services.AddScoped<IReader, PlaneReader>();
         services.AddScoped<IItemPropertyService, ItemPropertyService>();
         services.AddScoped<IPlainService, PlainService>();
+        services.AddScoped<IRequestService, RequestService>();
     }
 }

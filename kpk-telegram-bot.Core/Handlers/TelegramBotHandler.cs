@@ -3,7 +3,6 @@ using kpk_telegram_bot.Common.Contracts.HttpClients;
 using kpk_telegram_bot.Common.Contracts.Services;
 using kpk_telegram_bot.Common.Helpers;
 using kpk_telegram_bot.Common.Logger;
-using kpk_telegram_bot.Common.Models;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Extensions.Polling;
@@ -88,42 +87,32 @@ public class TelegramBotHandler : ITelegramBotHandler
     {
         //TODO запрет на использование в группах
         //TODO принимать excel
-        // Если сообщение не текст - игнорировать
-        if (message.Type != MessageType.Text && message.Type != MessageType.Document)
+
+        if (message.Type != MessageType.Text && message.Type != MessageType.Document 
+            || string.IsNullOrEmpty(message.Text) && string.IsNullOrEmpty(message.Caption))
         {
             return;
         }
         try
         {
-            if (string.IsNullOrEmpty(message.Text) is false)
+            var isUserActual = await _userService.IsActual(message.From.Id);
+            switch (isUserActual)
             {
-                var words = message.Text?.Split(' ');
-                //TODO переделать
-                if (await _userService.CheckExist(message.From.Id) is false)
-                {
-                    if (words.Length != 3)
-                    {
-                        await _telegramHttpClient.SendTextMessage(message.Chat.Id,
-                            "Вы новенький! Отправьте информацию о себе\r\n" +
-                            "Пример: Иванов Иван 1-1П9");
+                case false:
+                    await _authService.Restart(message.From.Id);
+                    break;
+                case null: 
+                    if (message.Text == "/start") 
+                    { 
+                        await _commandService.Execute(message); 
+                        break; 
                     }
-
-                    if (words.Length != 3)
-                    {
-                        return;
-                    }
-
-                    var result = await _authService.Register(new RegisterModel(message.From.Id, words));
-                    await _telegramHttpClient.SendTextMessage(message.Chat.Id, result);
-                    return;
-                }
+                    await _authService.Verify(message);
+                    break;
+                case true:
+                    await _commandService.Execute(message);
+                    break;
             }
-            if (await _userService.IsActual(message.From.Id) is false)
-            {
-                await _authService.Restart(message.From.Id);
-            }
-            
-            await _commandService.Execute(message);
         }
         catch (Exception e)
         {

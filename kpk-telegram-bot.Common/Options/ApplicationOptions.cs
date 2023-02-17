@@ -4,4 +4,5 @@ public class ApplicationOptions
 {
     public string ApplicationName { get; set; }
     public string Username { get; set; }
+    public long CreatorId { get; set; }
 }

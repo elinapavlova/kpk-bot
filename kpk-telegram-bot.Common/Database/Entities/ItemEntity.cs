@@ -11,4 +11,5 @@ public class ItemEntity : BaseEntity<Guid>
     public List<ItemPropertyEntity> Properties { get; set; }
     public List<UserEntity>? Users { get; set; }
     public List<ItemEntity>? Childs { get; set; }
+    public List<RequestEntity> Requests { get; set; }
 }

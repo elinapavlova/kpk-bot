@@ -64,5 +64,15 @@ public class KpkTelegramBotContext : DbContext
                 .WithMany(item => item.Users)
                 .HasForeignKey(user => user.GroupId);
         });
+
+        builder.Entity<RequestEntity>(x =>
+        {
+            x.Property(request => request.StudentName).IsRequired();
+            x.Property(request => request.UserId).IsRequired();
+
+            x.HasOne(request => request.Group)
+                .WithMany(group => group.Requests)
+                .HasForeignKey(request => request.GroupId);
+        });
     }
 }

@@ -15,7 +15,15 @@ public static class RoleHelper
         {nameof(GroupCommand), new List<UserRole> {UserRole.Admin}},
         {nameof(ScheduleCommand), new List<UserRole> {UserRole.Admin, UserRole.Student, UserRole.Distant}},
         {nameof(ImportCommand), new List<UserRole> {UserRole.Admin}},
-        {nameof(StartCommand), new List<UserRole> {UserRole.Admin, UserRole.Student, UserRole.Distant}},
-        {nameof(PlainCommand), new List<UserRole> {UserRole.Admin}}
+        {nameof(StartCommand), new List<UserRole> {UserRole.Admin, UserRole.Student, UserRole.Distant, UserRole.Guest}},
+        {nameof(PlainCommand), new List<UserRole> {UserRole.Admin}},
+        {nameof(AuthCommand), new List<UserRole> {UserRole.Admin}}
     };
+    
+    public static uint GetUserRoleId(string groupName)
+    {
+        return groupName.ToLower().Contains("пз")
+            ? (uint)UserRole.Distant
+            : (uint)UserRole.Student;
+    }
 }
