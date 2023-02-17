@@ -3,7 +3,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace kpk_telegram_bot.Common.Models;
 
-public class KeyboardByRolesModel
+public record KeyboardByRolesModel
 {
     public KeyboardByRolesModel(List<UserRole> roles, KeyValuePair<string, string> inlineButtonData)
     {

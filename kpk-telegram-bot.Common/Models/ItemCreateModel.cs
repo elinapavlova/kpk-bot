@@ -1,27 +1,14 @@
 ﻿namespace kpk_telegram_bot.Common.Models;
 
-public class ItemCreateModel
+public record ItemCreateModel(Guid TypeId, List<ItemPropertyCreateModel> Properties, Guid? ParentId = null)
 {
-    public Guid TypeId { get; set; }
-    public Guid? ParentId { get; set; }
-    public List<ItemPropertyCreateModel> Properties { get; set; }
-
-    public ItemCreateModel(Guid typeId, List<ItemPropertyCreateModel> properties, Guid? parentId = null)
-    {
-        TypeId = typeId;
-        Properties = properties;
-        ParentId = parentId;
-    }
+    public Guid TypeId { get; set; } = TypeId;
+    public Guid? ParentId { get; set; } = ParentId;
+    public List<ItemPropertyCreateModel> Properties { get; set; } = Properties;
 }
 
-public class ItemPropertyCreateModel
+public record ItemPropertyCreateModel(Guid TypeId, string? Value)
 {
-    public Guid TypeId { get; set; }
-    public string? Value { get; set; }
-
-    public ItemPropertyCreateModel(Guid typeId, string? value)
-    {
-        TypeId = typeId;
-        Value = value;
-    }
+    public Guid TypeId { get; set; } = TypeId;
+    public string? Value { get; set; } = Value;
 }

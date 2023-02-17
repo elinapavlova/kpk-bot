@@ -2,14 +2,8 @@
 
 namespace kpk_telegram_bot.Common.Models;
 
-public class CommandByRolesModel
+public record CommandByRolesModel(List<UserRole> Roles, KeyValuePair<string, string> Command)
 {
-    public CommandByRolesModel(List<UserRole> roles, KeyValuePair<string, string> command)
-    {
-        Roles = roles;
-        Command = command;
-    }
-
-    public List<UserRole> Roles { get; set; }
-    public KeyValuePair<string, string> Command { get; set; }
+    public List<UserRole> Roles { get; set; } = Roles;
+    public KeyValuePair<string, string> Command { get; set; } = Command;
 }
